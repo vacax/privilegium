@@ -123,6 +123,50 @@
             <version>5.0.3</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Para el uso de xterm-->
+        <dependency>
+            <groupId>com.flowingcode.addons</groupId>
+            <artifactId>xterm-console</artifactId>
+            <version>2.0.2</version>
+        </dependency>
+
+        <!--Librería de SSH-->
+        <dependency>
+            <groupId>com.hierynomus</groupId>
+            <artifactId>sshj</artifactId>
+            <version>0.32.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.vaadin.crudui</groupId>
+            <artifactId>crudui</artifactId>
+            <version>6.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+
     </dependencies>
 
     <build>

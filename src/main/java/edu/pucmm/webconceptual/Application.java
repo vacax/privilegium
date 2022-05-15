@@ -2,6 +2,7 @@ package edu.pucmm.webconceptual;
 
 import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.page.AppShellConfigurator;
+import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
@@ -20,6 +21,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 @Theme(value = "web-conceptual-pam", variant = Lumo.DARK)
 @PWA(name = "Web-Conceptual-PAM", shortName = "Web-Conceptual-PAM", offlineResources = {})
 @NpmPackage(value = "line-awesome", version = "1.3.0")
+@Push
 public class Application extends SpringBootServletInitializer implements AppShellConfigurator {
 
     public static void main(String[] args) {

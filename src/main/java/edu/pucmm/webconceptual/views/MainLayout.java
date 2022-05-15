@@ -4,25 +4,30 @@ package edu.pucmm.webconceptual.views;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.dependency.NpmPackage;
-import com.vaadin.flow.component.html.Footer;
-import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Header;
-import com.vaadin.flow.component.html.ListItem;
-import com.vaadin.flow.component.html.Nav;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.html.UnorderedList;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouterLink;
+import edu.pucmm.webconceptual.services.SecurityService;
 import edu.pucmm.webconceptual.views.about.AboutView;
+import edu.pucmm.webconceptual.views.conexiones.ConexionCrudView;
+import edu.pucmm.webconceptual.views.dashboard.DashboardView;
+import edu.pucmm.webconceptual.views.seguridad.UsuarioView;
 import edu.pucmm.webconceptual.views.sshterminal.SshTerminalView;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Optional;
 
 /**
  * The main view is a top-level placeholder for other views.
  */
 public class MainLayout extends AppLayout {
+
+    private SecurityService securityService;
 
     /**
      * A simple navigation item component, based on ListItem element.
@@ -66,7 +71,9 @@ public class MainLayout extends AppLayout {
 
     private H1 viewTitle;
 
-    public MainLayout() {
+    public MainLayout(SecurityService securityService) {
+        this.securityService = securityService;
+
         setPrimarySection(Section.DRAWER);
         addToNavbar(true, createHeaderContent());
         addToDrawer(createDrawerContent());
@@ -115,10 +122,10 @@ public class MainLayout extends AppLayout {
 
     private MenuItemInfo[] createMenuItems() {
         return new MenuItemInfo[]{ //
-                new MenuItemInfo("Ssh Terminal", "la la-terminal", SshTerminalView.class), //
-
+                new MenuItemInfo("Dashboard", "la la-dashboard", DashboardView.class), //
+                new MenuItemInfo("Conexiones", "la la-terminal", ConexionCrudView.class), //
+                new MenuItemInfo("Usuarios", "la la-file", UsuarioView.class), //
                 new MenuItemInfo("About", "la la-file", AboutView.class), //
-
         };
     }
 
@@ -126,6 +133,26 @@ public class MainLayout extends AppLayout {
         Footer layout = new Footer();
         layout.addClassNames("footer");
 
+        UserDetails maybeUser = securityService.getAuthenticatedUser();
+        if (maybeUser!=null) {
+
+            Avatar avatar = new Avatar(maybeUser.getUsername(), "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=128&h=128&q=80");
+            avatar.addClassNames("me-xs");
+
+            ContextMenu userMenu = new ContextMenu(avatar);
+            userMenu.setOpenOnClick(true);
+            userMenu.addItem("Logout", e -> {
+                securityService.logout();
+            });
+
+            Span name = new Span(maybeUser.getUsername());
+            name.addClassNames("font-medium", "text-s", "text-secondary");
+
+            layout.add(avatar, name);
+        } else {
+            Anchor loginLink = new Anchor("login", "Sign in");
+            layout.add(loginLink);
+        }
         return layout;
     }
 
