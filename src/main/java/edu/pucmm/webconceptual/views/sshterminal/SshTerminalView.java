@@ -6,7 +6,7 @@ import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
-import edu.pucmm.webconceptual.entidades.Conexion;
+import edu.pucmm.webconceptual.entidades.ServidorSsh;
 import edu.pucmm.webconceptual.services.ConexionService;
 import edu.pucmm.webconceptual.views.MainLayout;
 import net.schmizz.sshj.SSHClient;
@@ -32,7 +32,7 @@ public class SshTerminalView extends VerticalLayout implements BeforeEnterObserv
     private String prompt = "";
     private String hostname;
     private ConexionService conexionService;
-    private Conexion conexion;
+    private ServidorSsh servidorSsh;
 
 
 
@@ -92,8 +92,8 @@ public class SshTerminalView extends VerticalLayout implements BeforeEnterObserv
     protected void onAttach(AttachEvent attachEvent) {
         try {
             ui = attachEvent.getUI();
-            nombreHostnameConexion(conexion);
-            conexionShell(conexion);
+            nombreHostnameConexion(servidorSsh);
+            conexionShell(servidorSsh);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -105,15 +105,15 @@ public class SshTerminalView extends VerticalLayout implements BeforeEnterObserv
 
     /**
      *
-     * @param sshConexion
+     * @param sshServidorSsh
      * @throws IOException
      */
-    public void conexionShell(Conexion sshConexion) throws IOException {
+    public void conexionShell(ServidorSsh sshServidorSsh) throws IOException {
         final SSHClient ssh = new SSHClient();
         //configuración de conexión
         ssh.addHostKeyVerifier(new PromiscuousVerifier());
-        ssh.connect(sshConexion.getHost(), sshConexion.getPuerto());
-        ssh.authPassword(sshConexion.getUsuario(), sshConexion.getPassword());
+        ssh.connect(sshServidorSsh.getHost(), sshServidorSsh.getPuerto());
+        ssh.authPassword(sshServidorSsh.getUsuario(), sshServidorSsh.getPassword());
         final Session session = ssh.startSession();
 
         session.allocateDefaultPTY();
@@ -147,16 +147,16 @@ public class SshTerminalView extends VerticalLayout implements BeforeEnterObserv
 
     /**
      *
-     * @param sshConexion
+     * @param sshServidorSsh
      * @throws IOException
      */
-    public void nombreHostnameConexion(Conexion sshConexion) throws IOException {
+    public void nombreHostnameConexion(ServidorSsh sshServidorSsh) throws IOException {
         final SSHClient ssh = new SSHClient();
         try(ssh) {
             //configuración de conexión
             ssh.addHostKeyVerifier(new PromiscuousVerifier());
-            ssh.connect(sshConexion.getHost(), sshConexion.getPuerto());
-            ssh.authPassword(sshConexion.getUsuario(), sshConexion.getPassword());
+            ssh.connect(sshServidorSsh.getHost(), sshServidorSsh.getPuerto());
+            ssh.authPassword(sshServidorSsh.getUsuario(), sshServidorSsh.getPassword());
             final Session session = ssh.startSession();
             try(session) {
 
@@ -165,7 +165,7 @@ public class SshTerminalView extends VerticalLayout implements BeforeEnterObserv
                 ui.access(() -> {
                     try {
                         hostname = IOUtils.readFully(command.getInputStream()).toString().replaceAll("\n","");
-                        prompt = sshConexion.getUsuario()+"@"+hostname+":~$ "; //force la última parte
+                        prompt = sshServidorSsh.getUsuario()+"@"+hostname+":~$ "; //force la última parte
                         xterm.setPrompt(prompt);
                         System.out.println("El hostname es: "+hostname);
                     } catch (IOException e) {
@@ -181,6 +181,6 @@ public class SshTerminalView extends VerticalLayout implements BeforeEnterObserv
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
         String id = beforeEnterEvent.getRouteParameters().get("id").get();
         System.out.println("La conexión enviada: "+id);
-        conexion = conexionService.get(Long.parseLong(id)).get();
+        servidorSsh = conexionService.get(Long.parseLong(id)).get();
     }
 }

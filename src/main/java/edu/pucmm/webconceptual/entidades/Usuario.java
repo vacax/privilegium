@@ -29,6 +29,8 @@ public class Usuario implements Serializable {
     private boolean administrador;
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> listaRoles = new HashSet<>();
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<ServidorSsh> listaServidoresSsh = new HashSet<>();
     private boolean habilitado = true;
     @CreatedBy
     private String creadoPor = "sistemas";

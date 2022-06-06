@@ -1,12 +1,12 @@
 package edu.pucmm.webconceptual.services;
 
-import edu.pucmm.webconceptual.entidades.Conexion;
+import edu.pucmm.webconceptual.entidades.ServidorSsh;
 import edu.pucmm.webconceptual.repositorios.ConexionRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ConexionService extends BaseCrudService<Conexion, Long>{
+public class ConexionService extends BaseCrudService<ServidorSsh, Long>{
 
     private ConexionRepository conexionRepository;
 
@@ -15,7 +15,7 @@ public class ConexionService extends BaseCrudService<Conexion, Long>{
     }
 
     @Override
-    protected JpaRepository<Conexion, Long> getRepository() {
+    protected JpaRepository<ServidorSsh, Long> getRepository() {
         return conexionRepository;
     }
 }

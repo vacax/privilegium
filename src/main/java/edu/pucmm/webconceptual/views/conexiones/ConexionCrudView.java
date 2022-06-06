@@ -6,7 +6,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.router.*;
-import edu.pucmm.webconceptual.entidades.Conexion;
+import edu.pucmm.webconceptual.entidades.ServidorSsh;
 import edu.pucmm.webconceptual.services.ConexionService;
 import edu.pucmm.webconceptual.views.MainLayout;
 import edu.pucmm.webconceptual.views.sshterminal.SshTerminalView;
@@ -23,7 +23,7 @@ public class ConexionCrudView extends Div implements AfterNavigationObserver {
         setId("crud-conexion-view");
         setSizeFull();
         HorizontalLayout layout = new HorizontalLayout();
-        GridCrud<Conexion> crud = new GridCrud<>(Conexion.class);
+        GridCrud<ServidorSsh> crud = new GridCrud<>(ServidorSsh.class);
         crud.getGrid().setColumns("id", "usuario","host", "puerto");
         crud.getCrudFormFactory().setVisibleProperties("host", "puerto", "usuario", "password", "habilitado");
 
@@ -32,7 +32,7 @@ public class ConexionCrudView extends Div implements AfterNavigationObserver {
 
         //
         Button abrirConexionbtn = new Button("Abrir Conexión", buttonClickEvent -> {
-            Conexion tmp = crud.getGrid().getSelectedItems().stream().findFirst().get();
+            ServidorSsh tmp = crud.getGrid().getSelectedItems().stream().findFirst().get();
             System.out.println("Abriendo la conexión seleccionada: "+tmp.getHost());
             UI.getCurrent().navigate(SshTerminalView.class, new RouteParameters("id", String.valueOf(tmp.getId())));
         });

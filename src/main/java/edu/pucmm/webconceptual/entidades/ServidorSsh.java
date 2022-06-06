@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Entity
 @Data
-public class Conexion extends Base implements Serializable {
+public class ServidorSsh extends Base implements Serializable {
 
     String host;
     int puerto;
