@@ -4,10 +4,18 @@ import com.flowingcode.vaadin.addons.xterm.*;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
+import de.codecamp.vaadin.components.messagedialog.MessageDialog;
+import edu.pucmm.webconceptual.entidades.RegistroSesion;
 import edu.pucmm.webconceptual.entidades.ServidorSsh;
+import edu.pucmm.webconceptual.entidades.SesionUsuario;
 import edu.pucmm.webconceptual.services.ConexionService;
+import edu.pucmm.webconceptual.services.SecurityService;
+import edu.pucmm.webconceptual.services.SesionUsuarioService;
+import edu.pucmm.webconceptual.services.UsuarioService;
 import edu.pucmm.webconceptual.views.MainLayout;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.IOUtils;
@@ -22,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 @PageTitle("Ssh Terminal")
 @Route(value = "ssh-terminal/:id", layout = MainLayout.class)
 @PermitAll
-public class SshTerminalView extends VerticalLayout implements BeforeEnterObserver {
+public class SshTerminalView extends VerticalLayout implements BeforeEnterObserver, BeforeLeaveObserver {
 
     private UI ui;
     private XTerm xterm;
@@ -31,14 +39,24 @@ public class SshTerminalView extends VerticalLayout implements BeforeEnterObserv
     private InputStream inputStream;
     private String prompt = "";
     private String hostname;
-    private ConexionService conexionService;
+    private final ConexionService conexionService;
     private ServidorSsh servidorSsh;
+    private final SecurityService securityService;
+    private final SesionUsuarioService sesionUsuarioService;
+    private final UsuarioService usuarioService;
+    private SesionUsuario sesionUsuario;
+    private  SSHClient ssh;
 
 
-
-    public SshTerminalView(ConexionService conexionService) {
+    public SshTerminalView(ConexionService conexionService,
+                           SecurityService securityService,
+                           SesionUsuarioService sesionUsuarioService,
+                           UsuarioService usuarioService) {
 
         this.conexionService = conexionService;
+        this.securityService = securityService;
+        this.sesionUsuarioService = sesionUsuarioService;
+        this.usuarioService = usuarioService;
 
         //this.conexion =  conexion;
 
@@ -68,13 +86,18 @@ public class SshTerminalView extends VerticalLayout implements BeforeEnterObserv
             String lineaNueva = "";
             var comandos = line.split(" ");
             for (int i = 1; i < comandos.length; i++) {
-                lineaNueva+=comandos[i]+" ";
+                lineaNueva += comandos[i] + " ";
             }
-            System.out.println("Comando: "+lineaNueva);
+            System.out.println("Comando: " + lineaNueva);
             try {
-                outputStream.write((lineaNueva+"\n").getBytes());
+                // Enviando al registro de los log.
+                sesionUsuarioService.registrarComandoTrabajado(sesionUsuario, lineaNueva, RegistroSesion.TipoRegistro.COMANDO);
+
+                //Enviado al SSH.
+                outputStream.write((lineaNueva + "\n").getBytes());
                 outputStream.flush();
-            }catch (IOException e) {
+
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
 
@@ -104,12 +127,11 @@ public class SshTerminalView extends VerticalLayout implements BeforeEnterObserv
     }
 
     /**
-     *
      * @param sshServidorSsh
      * @throws IOException
      */
     public void conexionShell(ServidorSsh sshServidorSsh) throws IOException {
-        final SSHClient ssh = new SSHClient();
+        ssh = new SSHClient();
         //configuración de conexión
         ssh.addHostKeyVerifier(new PromiscuousVerifier());
         ssh.connect(sshServidorSsh.getHost(), sshServidorSsh.getPuerto());
@@ -125,17 +147,19 @@ public class SshTerminalView extends VerticalLayout implements BeforeEnterObserv
         outputStream = shell.getOutputStream();
 
         new Thread(() -> {
-            while(true){
+            while (true) {
                 try {
                     int byteDisponible = inputStream.available();
-                    if(byteDisponible > 0){
+                    if (byteDisponible > 0) {
                         byte[] inputData = new byte[1024];
                         inputStream.read(inputData, 0, byteDisponible);
                         ui.access(() -> {
                             String entrada = new String(inputData, 0, byteDisponible, StandardCharsets.UTF_8);
                             //entrada = entrada.replaceAll(prompt,"");
                             xterm.write(entrada);
-                            System.out.println("La entrada: "+entrada);
+                            System.out.println("La entrada: " + entrada);
+                            // Enviando al registro de los log.
+                            sesionUsuarioService.registrarComandoTrabajado(sesionUsuario, entrada, RegistroSesion.TipoRegistro.RESPUESTA);
                         });
                     }
                 } catch (IOException e) {
@@ -146,28 +170,27 @@ public class SshTerminalView extends VerticalLayout implements BeforeEnterObserv
     }
 
     /**
-     *
      * @param sshServidorSsh
      * @throws IOException
      */
     public void nombreHostnameConexion(ServidorSsh sshServidorSsh) throws IOException {
         final SSHClient ssh = new SSHClient();
-        try(ssh) {
+        try (ssh) {
             //configuración de conexión
             ssh.addHostKeyVerifier(new PromiscuousVerifier());
             ssh.connect(sshServidorSsh.getHost(), sshServidorSsh.getPuerto());
             ssh.authPassword(sshServidorSsh.getUsuario(), sshServidorSsh.getPassword());
             final Session session = ssh.startSession();
-            try(session) {
+            try (session) {
 
                 Session.Command command = session.exec("hostname");
                 command.join(1, TimeUnit.SECONDS);
                 ui.access(() -> {
                     try {
-                        hostname = IOUtils.readFully(command.getInputStream()).toString().replaceAll("\n","");
-                        prompt = sshServidorSsh.getUsuario()+"@"+hostname+":~$ "; //force la última parte
+                        hostname = IOUtils.readFully(command.getInputStream()).toString().replaceAll("\n", "");
+                        prompt = sshServidorSsh.getUsuario() + "@" + hostname + ":~$ "; //force la última parte
                         xterm.setPrompt(prompt);
-                        System.out.println("El hostname es: "+hostname);
+                        System.out.println("El hostname es: " + hostname);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -178,9 +201,40 @@ public class SshTerminalView extends VerticalLayout implements BeforeEnterObserv
     }
 
     @Override
+    public void beforeLeave(BeforeLeaveEvent event) {
+        if (ssh.isConnected()) {
+            BeforeLeaveEvent.ContinueNavigationAction action =  event.postpone();
+            MessageDialog messageDialog =
+                    new MessageDialog().setTitle("¿Desea salir de una conexión activa?", VaadinIcon.EDIT.create()).setMessage(
+                            "Tienes una conexión activa, salir de forma abrupta puede cerrar procesos que este ejecuando.");
+            messageDialog.addButton().text("Salir").primary().onClick(ev -> {
+                        Notification.show("Cerrando la conexión");
+                        try {
+                            ssh.close();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        action.proceed();
+                    })
+                    .closeOnClick();
+            messageDialog.addButtonToLeft().text("Volver").tertiary()
+                    .onClick(ev -> Notification.show("Canceled.")).closeOnClick();
+            messageDialog.open();
+        }
+    }
+
+    @Override
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
         String id = beforeEnterEvent.getRouteParameters().get("id").get();
-        System.out.println("La conexión enviada: "+id);
+        System.out.println("La conexión enviada: " + id);
         servidorSsh = conexionService.get(Long.parseLong(id)).get();
+
+        //creando la sesión para el registro de los logs.
+        usuarioService.get(securityService.getAuthenticatedUser().getUsername()).ifPresent(usuario -> {
+            sesionUsuario = new SesionUsuario()
+                    .usuario(usuario)
+                    .servidorSsh(servidorSsh);
+            sesionUsuarioService.save(sesionUsuario);
+        });
     }
 }

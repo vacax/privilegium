@@ -12,11 +12,13 @@ import edu.pucmm.webconceptual.views.MainLayout;
 import edu.pucmm.webconceptual.views.sshterminal.SshTerminalView;
 import org.vaadin.crudui.crud.impl.GridCrud;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 
 @PageTitle("Conexión Servidores")
 @Route(value = "conexiones", layout = MainLayout.class)
-@RolesAllowed("ADMIN")
+//@RolesAllowed("ADMIN")
+@PermitAll
 public class ConexionCrudView extends Div implements AfterNavigationObserver {
 
     public ConexionCrudView(ConexionService conexionService) {
@@ -24,8 +26,8 @@ public class ConexionCrudView extends Div implements AfterNavigationObserver {
         setSizeFull();
         HorizontalLayout layout = new HorizontalLayout();
         GridCrud<ServidorSsh> crud = new GridCrud<>(ServidorSsh.class);
-        crud.getGrid().setColumns("id", "usuario","host", "puerto");
-        crud.getCrudFormFactory().setVisibleProperties("host", "puerto", "usuario", "password", "habilitado");
+        crud.getGrid().setColumns("alias","id", "usuario","host", "puerto");
+        crud.getCrudFormFactory().setVisibleProperties("alias","host", "puerto", "usuario", "password", "habilitado");
 
         //
         crud.getCrudFormFactory().setFieldType("password", PasswordField.class);

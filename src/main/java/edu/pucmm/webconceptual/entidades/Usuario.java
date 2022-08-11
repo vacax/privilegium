@@ -40,4 +40,13 @@ public class Usuario implements Serializable {
     private Date dateCreated = new Date();
     @LastModifiedDate
     private Date lastUpdated = new Date();
+
+    public Usuario(String username, String correo, String password, String nombre, boolean administrador, boolean habilitado) {
+        this.username = username;
+        this.correo = correo;
+        this.password = password;
+        this.nombre = nombre;
+        this.administrador = administrador;
+        this.habilitado = habilitado;
+    }
 }

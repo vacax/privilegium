@@ -18,4 +18,6 @@ public class ConexionService extends BaseCrudService<ServidorSsh, Long>{
     protected JpaRepository<ServidorSsh, Long> getRepository() {
         return conexionRepository;
     }
+
+
 }

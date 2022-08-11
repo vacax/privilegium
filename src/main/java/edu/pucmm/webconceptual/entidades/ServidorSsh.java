@@ -9,9 +9,11 @@ import java.io.Serializable;
 @Data
 public class ServidorSsh extends Base implements Serializable {
 
+
     String host;
     int puerto;
     String usuario;
     String password;
+    String alias;
 
 }

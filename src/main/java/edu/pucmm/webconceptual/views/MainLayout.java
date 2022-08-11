@@ -16,7 +16,9 @@ import edu.pucmm.webconceptual.views.about.AboutView;
 import edu.pucmm.webconceptual.views.conexiones.ConexionCrudView;
 import edu.pucmm.webconceptual.views.dashboard.DashboardView;
 import edu.pucmm.webconceptual.views.seguridad.UsuarioView;
+import edu.pucmm.webconceptual.views.sesiones.SesionesUsuarioView;
 import edu.pucmm.webconceptual.views.sshterminal.SshTerminalView;
+import edu.pucmm.webconceptual.views.sshterminal.TerminalesDisponiblesView;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -123,7 +125,9 @@ public class MainLayout extends AppLayout {
     private MenuItemInfo[] createMenuItems() {
         return new MenuItemInfo[]{ //
                 new MenuItemInfo("Dashboard", "la la-dashboard", DashboardView.class), //
+                new MenuItemInfo("Terminales", "la la-terminal", TerminalesDisponiblesView.class), //
                 new MenuItemInfo("Conexiones", "la la-terminal", ConexionCrudView.class), //
+                new MenuItemInfo("Registros", "la la-terminal", SesionesUsuarioView.class), //
                 new MenuItemInfo("Usuarios", "la la-file", UsuarioView.class), //
                 new MenuItemInfo("About", "la la-file", AboutView.class), //
         };

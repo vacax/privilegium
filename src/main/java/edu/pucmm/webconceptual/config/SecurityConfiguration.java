@@ -2,20 +2,55 @@ package edu.pucmm.webconceptual.config;
 
 import com.vaadin.flow.spring.security.VaadinWebSecurityConfigurerAdapter;
 import edu.pucmm.webconceptual.views.login.LoginView;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import javax.annotation.Resource;
 
 @EnableWebSecurity
 @Configuration
 public class SecurityConfiguration
         extends VaadinWebSecurityConfigurerAdapter {
+
+
+    /*private final UserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+*/
+    @Resource
+    private UserDetailsService userDetailsService;
+
+    @Bean
+    public DaoAuthenticationProvider authProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    /*public SecurityConfiguration(@Autowired UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }*/
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+
+        //Autentificación JPA.
+        auth.authenticationProvider(authProvider());
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -36,6 +71,7 @@ public class SecurityConfiguration
         // This is important to register your login view to the
         // view access checker mechanism:
         setLoginView(http, LoginView.class);
+
     }
 
     /**
@@ -55,24 +91,4 @@ public class SecurityConfiguration
         super.configure(web);
     }
 
-    /**
-     * Demo UserDetailService which only provide two hardcoded
-     * in memory users and their roles.
-     * NOTE: This should not be used in real world applications.
-     */
-    @Bean
-    @Override
-    public UserDetailsService userDetailsService() {
-        UserDetails user =
-                User.withUsername("user")
-                        .password("{noop}user")
-                        .roles("USER")
-                        .build();
-        UserDetails admin =
-                User.withUsername("admin")
-                        .password("{noop}admin")
-                        .roles("ADMIN")
-                        .build();
-        return new InMemoryUserDetailsManager(user, admin);
-    }
 }
