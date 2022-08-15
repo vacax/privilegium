@@ -7,14 +7,13 @@ import javax.persistence.*;
 
 @Entity
 @Data
-@Accessors(fluent = true)
 public class RegistroSesion extends Base{
 
     public enum TipoRegistro{
         COMANDO, RESPUESTA
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     SesionUsuario sesionUsuario;
     @Lob
     String log;

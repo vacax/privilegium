@@ -1,15 +1,18 @@
 package edu.pucmm.webconceptual.views.sesiones;
 
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.router.AfterNavigationEvent;
-import com.vaadin.flow.router.AfterNavigationObserver;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.NativeButtonRenderer;
+import com.vaadin.flow.router.*;
 import edu.pucmm.webconceptual.encapsulaciones.SesionUsuarioLog;
 import edu.pucmm.webconceptual.entidades.SesionUsuario;
 import edu.pucmm.webconceptual.services.SesionUsuarioService;
 import edu.pucmm.webconceptual.views.MainLayout;
+import edu.pucmm.webconceptual.views.sshterminal.SshTerminalView;
 import org.vaadin.crudui.crud.impl.GridCrud;
 
 import javax.annotation.security.PermitAll;
@@ -24,20 +27,20 @@ public class SesionesUsuarioView extends Div implements AfterNavigationObserver 
         setId("log-conexion-view");
         setSizeFull();
         HorizontalLayout layout = new HorizontalLayout();
-        GridCrud<SesionUsuarioLog> crud = new GridCrud<>(SesionUsuarioLog.class);
-        crud.getGrid().setColumns("usuario","alias","host", "fecha");
+        Grid<SesionUsuarioLog> grid = new Grid<>(SesionUsuarioLog.class);
+        grid.setColumns("usuario","alias","host", "fecha");
 
-        //
-        crud.setFindAllOperation(sesionUsuarioService::listaRegistroLog);
-        /*crud.setOperations(
-                sesionUsuarioService::findAll,
-                sesionUsuarioService::update,
-                sesionUsuarioService::update,
-                sesionUsuarioService::deleteEntidad
-        );*/
+        //agregando el boton.
+        grid.addColumn(new ComponentRenderer<>(sesionUsuarioLog -> new Button("Ver log", buttonClickEvent -> {
+            System.out.println("El sesion usuario: "+sesionUsuarioLog.getUsuario());
+            UI.getCurrent().navigate(RegistroSesionView.class, new RouteParameters("id", String.valueOf(sesionUsuarioLog.getId())));
+        })));
+
+        //Habilitando la consulta. TODO: cambiar a lazy load
+        grid.setItems(sesionUsuarioService.listaRegistroLog());
 
         layout.setSizeFull();
-        layout.add(crud);
+        layout.add(grid);
         add(layout);
     }
 

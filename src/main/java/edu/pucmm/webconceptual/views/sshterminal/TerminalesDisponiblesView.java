@@ -3,10 +3,12 @@ package edu.pucmm.webconceptual.views.sshterminal;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 import edu.pucmm.webconceptual.services.ConexionService;
 import edu.pucmm.webconceptual.services.SecurityService;
@@ -21,7 +23,8 @@ import java.security.Principal;
 @PageTitle("Conexión Servidores")
 @Route(value = "terminales", layout = MainLayout.class)
 @PermitAll
-public class TerminalesDisponiblesView extends Div implements AfterNavigationObserver, BeforeLeaveObserver {
+@CssImport("./styles/botones.css")
+public class TerminalesDisponiblesView extends VerticalLayout implements AfterNavigationObserver, BeforeLeaveObserver {
 
     private final Logger logger = LoggerFactory.getLogger(TerminalesDisponiblesView.class);
 
@@ -41,6 +44,8 @@ public class TerminalesDisponiblesView extends Div implements AfterNavigationObs
                     System.out.println("Presionando la terminal del "+ servidorSsh.getAlias());
                     UI.getCurrent().navigate(SshTerminalView.class, new RouteParameters("id", String.valueOf(servidorSsh.getId())));
                 });
+                //incluyendo el css.
+                boton.addClassName("boton-terminales");
                 //
                 hz.add(boton);
             });

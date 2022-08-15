@@ -1,5 +1,6 @@
 package edu.pucmm.webconceptual.services;
 
+import edu.pucmm.webconceptual.encapsulaciones.RegistroSesionRow;
 import edu.pucmm.webconceptual.encapsulaciones.SesionUsuarioLog;
 import edu.pucmm.webconceptual.entidades.RegistroSesion;
 import edu.pucmm.webconceptual.entidades.SesionUsuario;
@@ -36,10 +37,14 @@ public class SesionUsuarioService extends BaseCrudService<SesionUsuario, Long>{
     public void registrarComandoTrabajado(SesionUsuario sesionUsuario,
                                           String comando,
                                           RegistroSesion.TipoRegistro tipoRegistro){
-        registroSesionRepository.save(new RegistroSesion()
-                .tipoRegistro(tipoRegistro)
-                .sesionUsuario(sesionUsuario)
-                .log(comando));
+        //
+        RegistroSesion re = new RegistroSesion();
+        re.setTipoRegistro(tipoRegistro);
+        re.setSesionUsuario(sesionUsuario);
+        re.setLog(comando);
+
+        //
+        registroSesionRepository.save(re);
     }
 
     public List<SesionUsuarioLog> listaRegistroLog(){
@@ -54,5 +59,13 @@ public class SesionUsuarioService extends BaseCrudService<SesionUsuario, Long>{
             lista.add(log);
         });
         return lista;
+    }
+
+    public List<RegistroSesionRow> getRegistroBySesion(SesionUsuario sesionUsuario){
+        List<RegistroSesionRow> rows = new ArrayList<>();
+        registroSesionRepository.findAllBySesionUsuarioOrderByDateCreated(sesionUsuario).forEach(r -> {
+            rows.add(new RegistroSesionRow(r.getId(), r.getDateCreated(), r.getTipoRegistro().name(), r.getLog()));
+        });
+        return rows;
     }
 }
