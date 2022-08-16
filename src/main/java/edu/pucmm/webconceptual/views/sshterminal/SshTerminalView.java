@@ -16,6 +16,7 @@ import edu.pucmm.webconceptual.services.ConexionService;
 import edu.pucmm.webconceptual.services.SecurityService;
 import edu.pucmm.webconceptual.services.SesionUsuarioService;
 import edu.pucmm.webconceptual.services.UsuarioService;
+import edu.pucmm.webconceptual.util.FuncionalidadesHelper;
 import edu.pucmm.webconceptual.views.MainLayout;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.IOUtils;
@@ -118,7 +119,8 @@ public class SshTerminalView extends VerticalLayout implements BeforeEnterObserv
             nombreHostnameConexion(servidorSsh);
             conexionShell(servidorSsh);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            //throw new RuntimeException(e);
+            FuncionalidadesHelper.mostrarMensajeError("Error Conectado Terminal", ""+e.getMessage(), TerminalesDisponiblesView.class, e);
         }
     }
 
@@ -202,7 +204,7 @@ public class SshTerminalView extends VerticalLayout implements BeforeEnterObserv
 
     @Override
     public void beforeLeave(BeforeLeaveEvent event) {
-        if (ssh.isConnected()) {
+        if (ssh !=null && ssh.isConnected()) {
             BeforeLeaveEvent.ContinueNavigationAction action =  event.postpone();
             MessageDialog messageDialog =
                     new MessageDialog().setTitle("¿Desea salir de una conexión activa?", VaadinIcon.EDIT.create()).setMessage(

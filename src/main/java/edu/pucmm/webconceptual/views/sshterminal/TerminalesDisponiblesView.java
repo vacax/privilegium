@@ -22,6 +22,7 @@ import java.security.Principal;
 
 @PageTitle("Conexión Servidores")
 @Route(value = "terminales", layout = MainLayout.class)
+@RouteAlias(value = "", layout = MainLayout.class)
 @PermitAll
 @CssImport("./styles/botones.css")
 public class TerminalesDisponiblesView extends VerticalLayout implements AfterNavigationObserver, BeforeLeaveObserver {

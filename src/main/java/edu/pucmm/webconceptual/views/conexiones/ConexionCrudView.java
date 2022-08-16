@@ -31,15 +31,16 @@ import java.util.Date;
 @Route(value = "conexiones", layout = MainLayout.class)
 //@RolesAllowed("ADMIN")
 @PermitAll
-public class ConexionCrudView extends Div implements AfterNavigationObserver {
+public class ConexionCrudView extends Div implements AfterNavigationObserver, BeforeEnterObserver {
 
     public ConexionCrudView(ConexionService conexionService) {
         setId("crud-conexion-view");
         setSizeFull();
         HorizontalLayout layout = new HorizontalLayout();
         GridCrud<ServidorSsh> crud = new GridCrud<>(ServidorSsh.class);
-        crud.getGrid().setColumns("alias","id", "usuario","host", "puerto");
+        crud.getGrid().setColumns("alias","id", "usuario","host", "puerto", "fechaUltimaRotacion");
         crud.getCrudFormFactory().setVisibleProperties("alias","host", "puerto", "usuario", "password", "fechaRotacion", "habilitado");
+
         //
         crud.getCrudFormFactory().setFieldType("password", PasswordField.class);
 
@@ -97,6 +98,11 @@ public class ConexionCrudView extends Div implements AfterNavigationObserver {
 
     @Override
     public void afterNavigation(AfterNavigationEvent afterNavigationEvent) {
+
+    }
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
 
     }
 }

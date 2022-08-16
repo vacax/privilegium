@@ -19,7 +19,7 @@ public class UsuarioService extends BaseCrudService<Usuario, String>{
     }
 
     @Override
-    protected JpaRepository<Usuario, String> getRepository() {
+    public JpaRepository<Usuario, String> getRepository() {
         return usuarioRepository;
     }
 

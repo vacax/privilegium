@@ -16,7 +16,7 @@ public abstract class BaseCrudService<T, ID> {
 
     private final Logger logger =  LoggerFactory.getLogger(BaseCrudService.class);
 
-    protected abstract JpaRepository<T, ID> getRepository();
+    public abstract JpaRepository<T, ID> getRepository();
 
     public Optional<T> get(ID id) {
         return this.getRepository().findById(id);

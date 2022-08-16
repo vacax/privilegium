@@ -18,7 +18,7 @@ public class RoleService extends BaseCrudService<Role, Long> {
     }
 
     @Override
-    protected JpaRepository<Role, Long> getRepository() {
+    public JpaRepository<Role, Long> getRepository() {
         return roleRepository;
     }
 

@@ -1,7 +1,16 @@
 package edu.pucmm.webconceptual.util;
 
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.router.RouteParameters;
+import de.codecamp.vaadin.components.messagedialog.MessageDialog;
+import edu.pucmm.webconceptual.views.sshterminal.SshTerminalView;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import javax.persistence.Id;
 import java.lang.reflect.Field;
+import java.util.Random;
 
 public class FuncionalidadesHelper {
 
@@ -34,4 +43,34 @@ public class FuncionalidadesHelper {
         field.set(entidad, value);
         return entidad;
     }
+
+    /**
+     * Visualiza el mensaje de error.
+     * @param titulo
+     * @param mensaje
+     * @param exception
+     */
+    public static void mostrarMensajeError(String titulo, String mensaje,Class clase ,Exception exception){
+        MessageDialog dialog = new MessageDialog();
+        dialog.setTitle(titulo, VaadinIcon.WARNING.create());
+        dialog.setMessage(mensaje);
+
+        dialog.addButtonToLeft().text("Detalle del Error").title("Tooltip").icon(VaadinIcon.ARROW_DOWN)
+                .toggleDetails();
+        dialog.addButton().text("Aceptar").icon(VaadinIcon.EXIT).primary().onClick(buttonClickEvent -> {
+            dialog.close();
+            UI.getCurrent().navigate(clase);
+        });
+
+        TextArea detailsText = new TextArea();
+        detailsText.setWidthFull();
+        detailsText.setMaxHeight("15em");
+        detailsText.setReadOnly(true);
+        detailsText.setValue(ExceptionUtils.getStackTrace(exception));
+        dialog.getDetails().add(detailsText);
+
+        dialog.open();
+
+    }
+
 }

@@ -24,7 +24,7 @@ public class SesionUsuarioService extends BaseCrudService<SesionUsuario, Long>{
     }
 
     @Override
-    protected JpaRepository<SesionUsuario, Long> getRepository() {
+    public JpaRepository<SesionUsuario, Long> getRepository() {
         return sesionUsuarioRepository;
     }
 
