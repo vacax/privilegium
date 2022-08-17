@@ -60,7 +60,7 @@ public class ConexionService extends BaseCrudService<ServidorSsh, Long>{
                 System.out.println("La proxima fecha: "+fechaUnaSemana.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
 
                 //
-                Session.Command command = session.exec(String.format("echo '%s:%s' | chpasswd && history -c", sshServidorSsh.getUsuario(), contrasena));
+                Session.Command command = session.exec(String.format("echo '%s:%s' | sudo chpasswd && history -c", sshServidorSsh.getUsuario(), contrasena));
                 command.join(1, TimeUnit.SECONDS);
 
                 //

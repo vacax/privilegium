@@ -6,7 +6,6 @@ import edu.pucmm.webconceptual.entidades.Role;
 import edu.pucmm.webconceptual.entidades.Usuario;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -16,14 +15,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
+
+
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-@Service
+@Component
 public class SecurityService implements UserDetailsService {
 
     private static final String LOGOUT_SUCCESS_URL = "/";
@@ -66,14 +65,15 @@ public class SecurityService implements UserDetailsService {
         Set<GrantedAuthority> roles = new HashSet<>();
         for (Role role : user.getListaRoles()) {
             logger.info("Usuario {} - Roles: {}",user.getUsername(),  role.getNombre());
-            roles.add(new SimpleGrantedAuthority(role.getValor()));
+            roles.add(new SimpleGrantedAuthority("ROLE_"+role.getValor()));
         }
 
         /*List<GrantedAuthority> grantedAuthorities = new ArrayList<>(roles);
         System.out.println("Listado Roles: "+grantedAuthorities.toString());*/
 
-        return User.withUsername(user.getUsername())
+        /*return User.withUsername(user.getUsername())
                 .password(user.getPassword())
-                .authorities("ROLE_ADMIN").build();
+                .authorities("ROLE_ADMIN").build();*/
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), true, true, true, true, roles);
     }
 }

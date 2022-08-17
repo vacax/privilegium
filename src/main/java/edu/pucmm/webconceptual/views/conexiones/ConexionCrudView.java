@@ -29,8 +29,7 @@ import java.util.Date;
 
 @PageTitle("Conexión Servidores")
 @Route(value = "conexiones", layout = MainLayout.class)
-//@RolesAllowed("ADMIN")
-@PermitAll
+@RolesAllowed({"ADMIN"})
 public class ConexionCrudView extends Div implements AfterNavigationObserver, BeforeEnterObserver {
 
     public ConexionCrudView(ConexionService conexionService) {

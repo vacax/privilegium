@@ -22,8 +22,7 @@ import javax.annotation.security.RolesAllowed;
 
 @PageTitle("Usuarios")
 @Route(value = "usuarios", layout = MainLayout.class)
-//@RolesAllowed("ADMIN")
-@PermitAll
+@RolesAllowed({"ADMIN"})
 public class UsuarioView extends Div implements AfterNavigationObserver {
 
     public UsuarioView(UsuarioService usuarioServices, RoleService rolesServices, ConexionService conexionService) {
@@ -46,7 +45,7 @@ public class UsuarioView extends Div implements AfterNavigationObserver {
         crud.setOperations(
                 usuarioServices::findAll,
                 usuarioServices::update,
-                usuarioServices::update,
+                usuarioServices::actualizarUsuario,
                 usuarioServices::deleteEntidad
         );
 

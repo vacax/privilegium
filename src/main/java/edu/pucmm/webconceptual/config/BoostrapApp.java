@@ -9,6 +9,7 @@ import edu.pucmm.webconceptual.services.UsuarioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
@@ -17,7 +18,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 @Component
 @Order(1)
@@ -26,18 +29,22 @@ public class BoostrapApp implements ApplicationRunner {
     private final Logger logger = LoggerFactory.getLogger(BoostrapApp.class);
     private RoleService roleService;
     private UsuarioService usuarioService;
+    private ConexionService conexionService;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     private Environment environment;
+    @Value("${DEMOSTRACION}")
+    private String demostracion;
 
     /**
-     *
      * @param roleService
+     * @param conexionService
      */
-    public BoostrapApp(RoleService roleService, UsuarioService usuarioService) {
+    public BoostrapApp(RoleService roleService, UsuarioService usuarioService, ConexionService conexionService) {
         this.usuarioService = usuarioService;
         this.roleService = roleService;
+        this.conexionService = conexionService;
     }
 
     @Override
@@ -62,7 +69,7 @@ public class BoostrapApp implements ApplicationRunner {
         }
 
         //Creación del usuario administrador.
-        if(usuarioService.get("admin").isEmpty()){
+        if (usuarioService.get("admin").isEmpty()) {
             logger.info("Creando Usuario administrador");
             Usuario admin = new Usuario("admin",
                     "admin@admin.com",
@@ -72,6 +79,74 @@ public class BoostrapApp implements ApplicationRunner {
                     true);
             admin.setListaRoles(new HashSet<>(roleService.findAll()));
             usuarioService.save(admin);
+        }
+
+        if (demostracion != null && demostracion.equals("1")) {
+            registroDemostracion();
+        }
+
+
+    }
+
+    private void registroDemostracion () {
+        System.out.println("Creando las terminales para la demostración");
+        if (usuarioService.get("usuario1").isEmpty()) {
+
+            ServidorSsh servidorSsh = new ServidorSsh();
+            servidorSsh.setHost("ssh-servidor-1");
+            servidorSsh.setAlias("Servidor #1");
+            servidorSsh.setUsuario("camacho");
+            servidorSsh.setPuerto(2222);
+            servidorSsh.setPassword("12345678");
+            conexionService.save(servidorSsh);
+
+            ServidorSsh servidorSsh2 = new ServidorSsh();
+            servidorSsh2.setHost("ssh-servidor-2");
+            servidorSsh2.setAlias("Servidor #2");
+            servidorSsh2.setUsuario("carlos");
+            servidorSsh2.setPuerto(2222);
+            servidorSsh2.setPassword("12345678");
+            conexionService.save(servidorSsh2);
+
+            ServidorSsh servidorSsh3 = new ServidorSsh();
+            servidorSsh3.setHost("ssh-servidor-3");
+            servidorSsh3.setAlias("Servidor #3");
+            servidorSsh3.setUsuario("ucjc");
+            servidorSsh3.setPuerto(2222);
+            servidorSsh3.setPassword("12345678");
+            conexionService.save(servidorSsh3);
+
+            //recuperando el admin.
+            Usuario usuario = usuarioService.get("admin").orElseThrow();
+            usuario.getListaServidoresSsh().addAll(List.of(servidorSsh, servidorSsh2, servidorSsh3));
+            usuarioService.update(usuario);
+
+            //creando los usuarios.
+            if (usuarioService.get("usuario1").isEmpty()) {
+                logger.info("Creando Usuario1");
+                Usuario usuario1 = new Usuario("usuario1",
+                        "usuario1@admin.com",
+                        passwordEncoder.encode("usuario1"),
+                        "Usuario 1",
+                        false,
+                        true);
+                usuario1.setListaRoles(new HashSet<>(Collections.singleton(roleService.findByCodigo(Role.RoleCodigo.USUARIO))));
+                usuario1.getListaServidoresSsh().add(servidorSsh);
+                usuarioService.save(usuario1);
+            }
+
+            if (usuarioService.get("demo").isEmpty()) {
+                logger.info("Creando demo");
+                Usuario usuario1 = new Usuario("demo",
+                        "demo@admin.com",
+                        passwordEncoder.encode("demo"),
+                        "Demostración",
+                        false,
+                        true);
+                usuario1.setListaRoles(new HashSet<>(Collections.singleton(roleService.findByCodigo(Role.RoleCodigo.USUARIO))));
+                usuario1.getListaServidoresSsh().add(servidorSsh2);
+                usuarioService.save(usuario1);
+            }
         }
 
     }
@@ -108,5 +183,8 @@ public class BoostrapApp implements ApplicationRunner {
             usuarioService.update(usuario);
 
         }
+
+
     }
+
 }

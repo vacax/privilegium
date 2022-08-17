@@ -35,4 +35,14 @@ public class UsuarioService extends BaseCrudService<Usuario, String>{
         }
         return super.update(entity);
     }
+
+    public Usuario actualizarUsuario(Usuario usuario){
+        get(usuario.getUsername()).ifPresent(tmp -> {
+            if(!tmp.getPassword().equals(usuario.getPassword())){
+                usuario.setPassword(bCryptPasswordEncoder.encode(usuario.getPassword()));
+            }
+
+        });
+        return save(usuario);
+    }
 }

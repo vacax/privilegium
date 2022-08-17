@@ -20,10 +20,11 @@ import edu.pucmm.webconceptual.views.MainLayout;
 import edu.pucmm.webconceptual.views.dashboard.DashboardView;
 
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 
 @PageTitle("Registro de Eventos")
 @Route(value = "registro-eventos/:id", layout = MainLayout.class)
-@PermitAll
+@RolesAllowed({"ADMIN"})
 public class RegistroSesionView extends Div implements BeforeEnterObserver {
 
     private SesionUsuarioService sesionUsuarioService;

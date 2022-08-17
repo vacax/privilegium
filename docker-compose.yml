@@ -1,0 +1,73 @@
+version: "3.7"
+services:
+    # Base de datos.
+    base-datos:
+        restart: always
+        image: mysql:8.0.30
+        env_file:
+            - env-demo.env
+        environment:
+            - MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
+            - MYSQL_USER=$MYSQL_USER
+            - MYSQL_DATABASE=$MYSQL_DB
+        volumes:
+            - datos_pam:/var/lib/mysql
+    # Aplicación web para gestionar la base de datos.
+    phpmyadmin:
+        image: phpmyadmin:5.2.0-apache
+        env_file:
+            - env-demo.env
+        ports:
+            - ${PUERTO_PHPMYADMIN}:80
+        environment:
+            - PMA_ARBITRARY=1
+        depends_on: #indica que primero debe subir los servicios indicados.
+            - base-datos
+    # Aplicación web - PAM
+    app-web:
+        restart: always
+        image: web-pam
+        env_file:
+            - env-demo.env
+        environment:
+            - SPRING_PROFILES_ACTIVE=${AMBIENTE}
+        ports:
+            - "${PUERTO_APP}:8080"
+        depends_on:
+            -   base-datos
+    # Imagenes con SSH para prueba
+    ssh-servidor-1:
+        restart: always
+        image: linuxserver/openssh-server:version-8.8_p1-r1
+        hostname: ssh-server-1
+        environment:
+            - USER_PASSWORD=12345678
+            - USER_NAME=camacho
+            - SUDO_ACCESS=true
+            - PASSWORD_ACCESS=true
+        ports:
+            -  "2222:2222"
+    ssh-servidor-2:
+        restart: always
+        image: linuxserver/openssh-server:version-8.8_p1-r1
+        hostname: ssh-server-2
+        environment:
+            - USER_PASSWORD=12345678
+            - USER_NAME=carlos
+            - SUDO_ACCESS=true
+            - PASSWORD_ACCESS=true
+        ports:
+            - "2223:2222"
+    ssh-servidor-3:
+        restart: always
+        image: linuxserver/openssh-server:version-8.8_p1-r1
+        hostname: ssh-server-3
+        environment:
+            - USER_PASSWORD=12345678
+            - USER_NAME=ucjc
+            - SUDO_ACCESS=true
+            - PASSWORD_ACCESS=true
+        ports:
+            - "2224:2222"
+volumes:
+    datos_pam:

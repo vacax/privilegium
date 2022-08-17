@@ -16,11 +16,12 @@ import edu.pucmm.webconceptual.views.sshterminal.SshTerminalView;
 import org.vaadin.crudui.crud.impl.GridCrud;
 
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 
 @PageTitle("Registros de Conexiones")
 @Route(value = "log-conexiones", layout = MainLayout.class)
 //@RolesAllowed("ADMIN")
-@PermitAll
+@RolesAllowed({"ADMIN"})
 public class SesionesUsuarioView extends Div implements AfterNavigationObserver {
 
     public SesionesUsuarioView(SesionUsuarioService sesionUsuarioService) {

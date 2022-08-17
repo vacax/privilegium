@@ -16,11 +16,11 @@ import edu.pucmm.webconceptual.views.MainLayout;
 import edu.pucmm.webconceptual.views.sesiones.RegistroSesionView;
 
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 
 @PageTitle("Registros de Rotaciones Contraseña")
 @Route(value = "log-rotaciones", layout = MainLayout.class)
-//@RolesAllowed("ADMIN")
-@PermitAll
+@RolesAllowed({"ADMIN"})
 public class RotacionesPasswordView extends Div implements AfterNavigationObserver {
 
     public RotacionesPasswordView(ConexionService conexionService) {

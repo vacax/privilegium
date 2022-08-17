@@ -23,6 +23,8 @@ import edu.pucmm.webconceptual.views.sshterminal.TerminalesDisponiblesView;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -124,15 +126,27 @@ public class MainLayout extends AppLayout {
     }
 
     private MenuItemInfo[] createMenuItems() {
-        return new MenuItemInfo[]{ //
-                //new MenuItemInfo("Dashboard", "la la-dashboard", DashboardView.class), //
-                new MenuItemInfo("Terminales", "la la-terminal", TerminalesDisponiblesView.class), //
-                new MenuItemInfo("Conexiones", "la la-terminal", ConexionCrudView.class), //
-                new MenuItemInfo("Registros", "la la-terminal", SesionesUsuarioView.class), //
-                new MenuItemInfo("Rotación Password", "la la-terminal", RotacionesPasswordView.class), //
-                new MenuItemInfo("Usuarios", "la la-file", UsuarioView.class), //
-                new MenuItemInfo("About", "la la-file", AboutView.class), //
-        };
+        List<MenuItemInfo> listaMenu = new ArrayList<>();
+        //Determinando los permisos para el menu.
+        var listaRoles = securityService.getAuthenticatedUser().getAuthorities();
+        //
+        listaRoles.forEach(role -> {
+            if((role.getAuthority().equals("ROLE_USUARIO") || role.getAuthority().equals("ROLE_ADMIN")) && listaMenu.isEmpty()){
+                listaMenu.add(new MenuItemInfo("Terminales", "la la-terminal", TerminalesDisponiblesView.class));
+
+            }
+            if(role.getAuthority().equals("ROLE_ADMIN")){
+                listaMenu.add(new MenuItemInfo("Conexiones", "la la-terminal", ConexionCrudView.class));
+                listaMenu.add(new MenuItemInfo("Registros", "la la-terminal", SesionesUsuarioView.class));
+                listaMenu.add(new MenuItemInfo("Rotación Password", "la la-terminal", RotacionesPasswordView.class));
+                listaMenu.add(new MenuItemInfo("Usuarios", "la la-file", UsuarioView.class));
+            }
+        });
+        //
+        listaMenu.add(new MenuItemInfo("About", "la la-file", AboutView.class));
+
+        //
+        return listaMenu.toArray(MenuItemInfo[]::new);
     }
 
     private Footer createFooter() {

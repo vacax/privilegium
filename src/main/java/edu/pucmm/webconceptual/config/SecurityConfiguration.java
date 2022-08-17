@@ -50,6 +50,8 @@ public class SecurityConfiguration
 
         //Autentificación JPA.
         auth.authenticationProvider(authProvider());
+        //auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+
     }
 
     @Override

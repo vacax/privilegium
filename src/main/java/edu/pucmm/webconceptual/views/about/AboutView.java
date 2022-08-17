@@ -8,11 +8,12 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import edu.pucmm.webconceptual.views.MainLayout;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 
 @PageTitle("About")
 @Route(value = "about", layout = MainLayout.class)
-@RolesAllowed("ADMIN")
+@PermitAll
 public class AboutView extends VerticalLayout {
 
     public AboutView() {

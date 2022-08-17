@@ -18,12 +18,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import java.security.Principal;
 
 @PageTitle("Conexión Servidores")
 @Route(value = "terminales", layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
-@PermitAll
+@RolesAllowed({"USUARIO","ADMIN"})
 @CssImport("./styles/botones.css")
 public class TerminalesDisponiblesView extends VerticalLayout implements AfterNavigationObserver, BeforeLeaveObserver {
 
