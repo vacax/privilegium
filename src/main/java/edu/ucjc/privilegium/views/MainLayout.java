@@ -95,7 +95,7 @@ public class MainLayout extends AppLayout {
     }
 
     private Component createDrawerContent() {
-        H2 appName = new H2("Web-Conceptual-PAM");
+        H2 appName = new H2("Privilegium - PAM");
         appName.addClassNames("app-name");
 
         com.vaadin.flow.component.html.Section section = new com.vaadin.flow.component.html.Section(appName,
@@ -139,7 +139,7 @@ public class MainLayout extends AppLayout {
             }
         });
         //
-        listaMenu.add(new MenuItemInfo("About", "la la-file", AboutView.class));
+        listaMenu.add(new MenuItemInfo("Acerca De", "la la-file", AboutView.class));
 
         //
         return listaMenu.toArray(MenuItemInfo[]::new);
