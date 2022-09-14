@@ -22,8 +22,8 @@ public class AboutView extends VerticalLayout {
         img.setWidth("200px");
         add(img);
 
-        add(new H2("This place intentionally left empty"));
-        add(new Paragraph("It’s a place where you can grow your own UI 🤗"));
+        add(new H2("Proyecto Desarrollado por Carlos Alfredo Camacho Guerrero (carlos.camacho1@alumno.ucjc.edu)"));
+        add(new Paragraph("Como parte del Master en Ciberseguridad de la Universidad Camilo José Cela"));
 
         setSizeFull();
         setJustifyContentMode(JustifyContentMode.CENTER);
