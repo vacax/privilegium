@@ -90,7 +90,7 @@ public class BoostrapApp implements ApplicationRunner {
 
     private void registroDemostracion () {
         System.out.println("Creando las terminales para la demostración");
-        if (usuarioService.get("usuario1").isEmpty()) {
+        if (usuarioService.get("usuario").isEmpty()) {
 
             ServidorSsh servidorSsh = new ServidorSsh();
             servidorSsh.setHost("ssh-servidor-1");
@@ -122,12 +122,12 @@ public class BoostrapApp implements ApplicationRunner {
             usuarioService.update(usuario);
 
             //creando los usuarios.
-            if (usuarioService.get("usuario1").isEmpty()) {
-                logger.info("Creando Usuario1");
-                Usuario usuario1 = new Usuario("usuario1",
+            if (usuarioService.get("usuario").isEmpty()) {
+                logger.info("Creando usuario");
+                Usuario usuario1 = new Usuario("usuario",
                         "usuario1@admin.com",
-                        passwordEncoder.encode("usuario1"),
-                        "Usuario 1",
+                        passwordEncoder.encode("usuario"),
+                        "Usuario",
                         false,
                         true);
                 usuario1.setListaRoles(new HashSet<>(Collections.singleton(roleService.findByCodigo(Role.RoleCodigo.USUARIO))));
@@ -137,15 +137,15 @@ public class BoostrapApp implements ApplicationRunner {
 
             if (usuarioService.get("demo").isEmpty()) {
                 logger.info("Creando demo");
-                Usuario usuario1 = new Usuario("demo",
+                Usuario demo = new Usuario("demo",
                         "demo@admin.com",
                         passwordEncoder.encode("demo"),
                         "Demostración",
                         false,
                         true);
-                usuario1.setListaRoles(new HashSet<>(Collections.singleton(roleService.findByCodigo(Role.RoleCodigo.USUARIO))));
-                usuario1.getListaServidoresSsh().add(servidorSsh2);
-                usuarioService.save(usuario1);
+                demo.setListaRoles(new HashSet<>(Collections.singleton(roleService.findByCodigo(Role.RoleCodigo.USUARIO))));
+                demo.getListaServidoresSsh().add(servidorSsh2);
+                usuarioService.save(demo);
             }
         }
 

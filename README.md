@@ -81,4 +81,21 @@ sin interactuar con el host, son:
 * 80: Servidor PhpMyAdmin. 
 * 2222: Todas las instancias de los servidores SSH de prueba.
 
+### Usuarios
+
+* admin / admin -> Perfil Administrador, todo el acceso al sistema.
+* usuario / usuario -> Perfil de Usuario, acceso únicamente a las terminales con permiso.
+* demo / demo -> Perfil de Usuario, acceso únicamente a las terminales con permiso.
+
+## Imágenes
+
+![Login aplicación](/img/login.png)
+
+![Entrada de la aplicación](/img/entrada.png)
+
+![Acceso de terminal](/img/terminal.png)
+
+![Edición de terminal](/img/edicion-terminal.png)
+
+![Usuario edición](/img/usuario-edicion.png)
 
