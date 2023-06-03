@@ -62,8 +62,7 @@ Para fines de demostración, tenemos disponible el script de Docker Compose para
 Para la ejecucion:
 
 ```
-docker build -f Dockerfile -t web-pam .
-docker-compose down && docker-compose up --env-file env-demo.env -d
+docker compose down && docker compose --env-file env-demo.env up -d
 ```
 
 Los puertos disponibles en el host:
