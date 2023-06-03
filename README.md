@@ -63,7 +63,7 @@ Para la ejecucion:
 
 ```
 docker build -f Dockerfile -t web-pam .
-docker-compose down && docker-compose up -d
+docker-compose down && docker-compose up --env-file env-demo.env -d
 ```
 
 Los puertos disponibles en el host:

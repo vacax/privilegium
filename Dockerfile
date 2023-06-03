@@ -26,7 +26,7 @@ COPY --chown=myuser:myuser package-lock.json* pnpm-lock.yaml* webpack.config.js*
 RUN mvn clean package -DskipTests -Pproduction
 
 # Creando la etapa de ejecución con el archivo compilado.
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17.0.7_7-jre-jammy
 COPY --from=build /usr/src/app/target/*.jar /usr/app/app.jar
 RUN useradd -m myuser
 USER myuser

@@ -4,19 +4,17 @@ services:
     base-datos:
         restart: always
         image: mysql:8.0.30
-        env_file:
-            - env-demo.env
         environment:
-            - MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
-            - MYSQL_USER=$MYSQL_USER
-            - MYSQL_DATABASE=$MYSQL_DB
+            - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+            - MYSQL_USER=${MYSQL_USER}
+            - MYSQL_DATABASE=${MYSQL_DB}
+        env_file: env-demo.env
         volumes:
             - datos_pam:/var/lib/mysql
     # Aplicación web para gestionar la base de datos.
     phpmyadmin:
         image: phpmyadmin:5.2.0-apache
-        env_file:
-            - env-demo.env
+        env_file: env-demo.env
         ports:
             - ${PUERTO_PHPMYADMIN}:80
         environment:
@@ -27,8 +25,8 @@ services:
     app-web:
         restart: always
         image: web-pam
-        env_file:
-            - env-demo.env
+        build: .
+        env_file: env-demo.env
         environment:
             - SPRING_PROFILES_ACTIVE=${AMBIENTE}
         ports:
